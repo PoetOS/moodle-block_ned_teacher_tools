@@ -62,7 +62,7 @@ $settings->add(
         'block_ned_teacher_tools/refreshmodefrontpage',
         get_string('refreshmodefrontpage', 'block_ned_teacher_tools'),
         '',
-        'pageload',
+        'manual',
         array(
             'pageload' => get_string('pageload', 'block_ned_teacher_tools'),
             'manual' => get_string('manual', 'block_ned_teacher_tools')
@@ -200,7 +200,7 @@ $settings->add(
         'block_ned_teacher_tools/showtitles',
         get_string('titlesforlinkclusters', 'block_ned_teacher_tools'),
         '',
-        0,
+        1,
         $showhideoptions
     )
 );
