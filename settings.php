@@ -134,6 +134,23 @@ $settings->add( new admin_setting_configempty('block_ned_teacher_tools/coursesel
     get_string('coursecategoriesincluded', 'block_ned_teacher_tools'),
     '<a class="btn" href="'.$coursecaturl->out().'">'.get_string('selectcategories', 'block_ned_teacher_tools').'</a>')
 );
+
+$settings->add(
+    new admin_setting_configselect(
+        'block_ned_teacher_tools/suspendeduserstoshow',
+        get_string('suspendeduserstoshow', 'block_ned_teacher_tools'),
+        '',
+        0,
+        array(
+            '0' => get_string('none', 'block_ned_teacher_tools'),
+            '1' => get_string('suspendedenrollments', 'block_ned_teacher_tools'),
+            '2' => get_string('suspendedusers', 'block_ned_teacher_tools'),
+            '3' => get_string('both', 'block_ned_teacher_tools')
+        )
+    )
+);
+
+
 $settings->add(
     new admin_setting_configselect(
         'block_ned_teacher_tools/editortoggle',

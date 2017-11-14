@@ -30,6 +30,7 @@ require_once($CFG->dirroot . '/mod/forum/lib.php');
 // One of these is necessary!
 $courseid = optional_param('id', 0, PARAM_INT);
 $group = optional_param('group', 0, PARAM_INT);
+$showsuspendedusers = optional_param('showsuspendedusers', 1, PARAM_INT);
 $unsubmitted = optional_param('unsubmitted', '0', PARAM_INT);
 
 $sort = optional_param('sort', 'name', PARAM_TEXT);
@@ -83,14 +84,22 @@ if ($layout = get_config('block_ned_teacher_tools', 'pagelayout')) {
 
 $PAGE->set_context($context);
 
+// Suspended users view,
+list($onlyactiveenrollments, $showsuspendedaccounts) = block_ned_teacher_tools_suspended_users_view_vars($course->id);
+
+if (!$showsuspendedusers) {
+    $onlyactiveenrollments = true;
+    $showsuspendedaccounts = false;
+}
+
 // If comes from course page.
-//$currentgroup = get_current_group($course->id);
 $currentgroup = $SESSION->currentgroup[$course->id];
+
 
 if (($groupstudents = block_ned_teacher_tools_mygroup_members($course->id, $USER->id)) && ($currentgroup === 0)) {
     $students = $groupstudents;
 } else {
-    $students = get_enrolled_users($context, 'mod/assign:submit', $currentgroup, 'u.*', 'u.firstname');
+    $students = get_enrolled_users($context, 'mod/assign:submit', $currentgroup, 'u.*', 'u.firstname', 0, 0, $onlyactiveenrollments);
 }
 
 
@@ -98,8 +107,12 @@ $simplegradebook = array();
 $weekactivitycount = array();
 
 foreach ($students as $key => $value) {
-    if (!$value->suspended) {
+    if ($showsuspendedaccounts) {
         $simplegradebook[$key]['name'] = $value->firstname . ' ' . substr($value->lastname, 0, 1) . '.';
+    } else {
+        if (!$value->suspended) {
+            $simplegradebook[$key]['name'] = $value->firstname . ' ' . substr($value->lastname, 0, 1) . '.';
+        }
     }
 }
 
@@ -337,12 +350,22 @@ $PAGE->navbar->add(get_string('progressreport', 'block_ned_teacher_tools'), new 
 echo $OUTPUT->header();
 
 // The view options.
-$viewopts = array('1' => 'Yes', '0' => 'No');
-$urlview = new moodle_url('progress_report.php', array('id' => $courseid, 'group' => $group));
+$viewopts = array(
+    '1' => get_string('yes', 'block_ned_teacher_tools'),
+    '0' => get_string('no', 'block_ned_teacher_tools')
+);
+$urlview = new moodle_url('progress_report.php', array('id' => $courseid, 'group' => $group, 'showsuspendedusers' => $showsuspendedusers));
 $select = new single_select($urlview, 'unsubmitted', $viewopts, $unsubmitted, '');
-$select->formid = 'fngroup';
-$select->label = 'Include unsubmitted activities in final grade';
+$select->formid = 'fngroup1';
+$select->label = get_string('includeunsubmittedactivities', 'block_ned_teacher_tools');
 $viewform = '<div class="groupselector">'.$OUTPUT->render($select).'</div>';
+
+// Suspended user filter;
+$urlview = new moodle_url('progress_report.php', array('id' => $courseid, 'group' => $group, 'unsubmitted' => $unsubmitted));
+$select = new single_select($urlview, 'showsuspendedusers', $viewopts, $showsuspendedusers, '');
+$select->formid = 'fngroup2';
+$select->label = get_string('showsuspendedusers', 'block_ned_teacher_tools');
+$viewform .= '<div class="groupselector">'.$OUTPUT->render($select).'</div>';
 
 // No course average calculation.
 $nocorseaveragemsg = '';
@@ -355,11 +378,11 @@ if ($gradeitem = $DB->get_record('grade_items', array('courseid' => $courseid, '
 
 echo '<div class="fn-menuwrapper">';
 block_ned_teacher_tools_groups_print_course_menu($course, $CFG->wwwroot.'/blocks/ned_teacher_tools/progress_report.php?id='.
-    $course->id.'&unsubmitted='.$unsubmitted, false, true);
+    $course->id.'&unsubmitted='.$unsubmitted.'&showsuspendedusers='.$showsuspendedusers, false, true);
 echo $viewform;
-echo "<img src=\"" . $OUTPUT->pix_url('i/grades') . "\" class=\"icon\" alt=\"\" />" .
+echo "<div class=\"groupselector\"><img src=\"" . $OUTPUT->pix_url('i/grades') . "\" class=\"icon\" alt=\"\" />" .
     '<a href="' . $CFG->wwwroot . '/grade/report/index.php?id=' . $course->id .
-    '&navlevel=top">' . get_string('moodlegradebook', 'block_ned_teacher_tools') . '</a>';
+    '&navlevel=top">' . get_string('moodlegradebook', 'block_ned_teacher_tools') . '</a></div>';
 echo '</div>';
 echo '<div class="tablecontainer">';
 echo $nocorseaveragemsg;
