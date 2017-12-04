@@ -3239,7 +3239,7 @@ function block_ned_teacher_tools_footer() {
     $output = html_writer::div(
         html_writer::div(
             html_writer::link(
-                'http://ned.ca/marking-manager',
+                'http://ned.ca/teacher-tools',
                 get_string('pluginname', 'block_ned_teacher_tools'),
                 array('target' => '_blank')
             ),
@@ -3387,7 +3387,8 @@ function block_ned_teacher_tools_cache_course_data ($courseid, progress_bar $pro
     $counter = 0;
     if (!is_null($progressbar)) {
         $donepercent = floor($counter / $numberofitems * 100);
-        $progressbar->update_full($donepercent, "$counter of $numberofitems");
+        $progressbar->update_full($donepercent, "$counter of $numberofitems ".
+            get_string('courses', 'block_ned_teacher_tools'));
     }
     foreach ($cachecourses as $filtercourse) {
         if ($course = $DB->get_record('course', array('id' => $filtercourse))) {
@@ -3462,7 +3463,8 @@ function block_ned_teacher_tools_cache_course_data ($courseid, progress_bar $pro
                 $countermodule++;
                 if (!is_null($progressbar)) {
                     $donepercent = floor(($counter + ($countermodule / $numberomodules)) / $numberofitems * 100);
-                    $progressbar->update_full($donepercent, "$counter of $numberofitems");
+                    $progressbar->update_full($donepercent, "$counter of $numberofitems ".
+                        get_string('courses', 'block_ned_teacher_tools'));
                 }
             }
 
@@ -3471,7 +3473,8 @@ function block_ned_teacher_tools_cache_course_data ($courseid, progress_bar $pro
         $counter++;
         if (!is_null($progressbar)) {
             $donepercent = floor($counter / $numberofitems * 100);
-            $progressbar->update_full($donepercent, "$counter of $numberofitems");
+            $progressbar->update_full($donepercent, "$counter of $numberofitems ".
+                get_string('courses', 'block_ned_teacher_tools'));
         }
     }
 

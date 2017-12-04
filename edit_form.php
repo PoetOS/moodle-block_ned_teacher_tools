@@ -22,6 +22,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 require_once(dirname(__FILE__) . '/../../config.php');
+require_once($CFG->dirroot . '/blocks/ned_teacher_tools/lib.php');
 
 /**
  * Simple ned_teacher_tools block config form definition
@@ -56,7 +57,7 @@ class block_ned_teacher_tools_edit_form extends block_edit_form {
         );
 
         $mform->addElement('static', 'blockinfo', get_string('blockinfo', 'block_ned_teacher_tools'),
-            '<a target="_blank" href="http://ned.ca/marking-manager">http://ned.ca/marking-manager</a>');
+            '<a target="_blank" href="http://ned.ca/teacher-tools">http://ned.ca/teacher-tools</a>');
 
         $settingurl = new moodle_url('/admin/settings.php', array('section' => 'blocksettingned_teacher_tools'));
         $mform->addElement('static', 'blocksettings', get_string('blocksitesettings', 'block_ned_teacher_tools'),
@@ -72,6 +73,61 @@ class block_ned_teacher_tools_edit_form extends block_edit_form {
             $mform->addElement('select', 'config_include_orphaned',
                 get_string('include_orphaned', 'block_ned_teacher_tools'), $yesno);
             $mform->setDefault('config_keepseparate', 0);
+
+            // Custom links.
+            $blocksettings = block_ned_teacher_tools_get_block_config($this->block->page->course->id);
+
+            $mform->addElement('header', 'customlinks',
+                get_string('customlinks', 'block_ned_teacher_tools'));
+
+            $numberoflinksoptions = array();
+            for ($i = 0; $i <= 10; $i++) {
+                $numberoflinksoptions[$i] = $i;
+            }
+            $mform->addElement('select', 'config_numberoflinks',
+                get_string('numberoflinks', 'block_ned_teacher_tools'), $numberoflinksoptions);
+            $mform->setDefault('config_numberoflinks', '0');
+
+            $mform->addElement('static', 'iconcoodes', get_string('iconcoodes', 'block_ned_teacher_tools'),
+                '<a target="_blank" href="http://fontawesome.io/icons/">http://fontawesome.io/icons/</a>');
+
+            $linkbehaviouroptions = array(
+                '_blank' => get_string('newwindow', 'block_ned_teacher_tools'),
+                '_self' => get_string('samewindow', 'block_ned_teacher_tools'),
+                '_popup' => get_string('popup', 'block_ned_teacher_tools')
+            );
+
+            $numberoflinks = (isset($blocksettings->numberoflinks)) ? $blocksettings->numberoflinks : 0;
+            if (!empty($numberoflinks)) {
+                for ($i = 1; $i <= (int)$numberoflinks; $i++) {
+                    $mform->addElement('html', html_writer::div(get_string('link', 'block_ned_teacher_tools').' '.$i,
+                        'block_ned_teacher_tools_configsubtitle')
+                    );
+                    $mform->addElement('text', 'config_iconcode_'.$i, get_string('iconcode', 'block_ned_teacher_tools'));
+                    $mform->setType('config_iconcode_'.$i, PARAM_TEXT);
+                    $mform->setDefault('config_iconcode_'.$i, 'fa-square-o');
+
+                    $mform->addElement('text', 'config_customlinkstitle_'.$i, get_string('customlinkstitle', 'block_ned_teacher_tools'));
+                    $mform->setType('config_customlinkstitle_'.$i, PARAM_TEXT);
+
+                    $mform->addElement('text', 'config_customlinkurl_'.$i, get_string('link', 'block_ned_teacher_tools'));
+                    $mform->setType('config_customlinkurl_'.$i, PARAM_URL);
+
+                    $mform->addElement('select', 'config_linkbehaviour_'.$i,
+                        get_string('linkbehaviour', 'block_ned_teacher_tools').'-'.$i, $linkbehaviouroptions);
+                }
+            }
+            // Site links.
+            $mform->addElement('html', html_writer::div('Site links', 'block_ned_teacher_tools_configsubtitle'));
+            if ($numberoflinks = get_config('block_ned_teacher_tools', 'numberoflinks')) {
+                for ($i = 1; $i <= $numberoflinks; $i++) {
+                    $mform->addElement('select', 'config_sitelink_' . $i, get_config('block_ned_teacher_tools', 'customlinkstitle_' . $i), $yesno);
+                    $mform->setDefault('config_sitelink_' . $i, 1);
+                }
+            }
+
+
+
 
             // Other setting.
             $mform->addElement('header', 'othersettings',

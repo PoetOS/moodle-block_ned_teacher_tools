@@ -48,6 +48,8 @@ class block_ned_teacher_tools extends block_list {
         if (! isset($this->config)) {
             $this->config = new stdClass;
         }
+        $module = array('name' => 'block_ned_teacher_tools', 'fullpath' => '/blocks/ned_teacher_tools/module1.js');
+        $this->page->requires->js_init_call('M.block_ned_teacher_tools.init_popup', null, false, $module);
 
         $blocktitlesitelevel = get_config('block_ned_teacher_tools', 'blocktitlesitelevel');
         $blocktitlecourselevel = get_config('block_ned_teacher_tools', 'blocktitlecourselevel');
@@ -56,6 +58,40 @@ class block_ned_teacher_tools extends block_list {
             $this->title = $blocktitlesitelevel;
         } else {
             $this->title = $blocktitlecourselevel;
+        }
+        // Default setting values.
+        if($this->page->course->id != SITEID) {
+            if (empty($this->config->numberoflinks)) {
+                $this->config->numberoflinks = 0;
+            } else {
+                $numberofcourselinks = $this->config->numberoflinks;
+                for ($i = 0; $i <= $numberofcourselinks; $i++) {
+                    $var = 'iconcode_'.$i;
+                    if (!isset($this->config->$var)) {
+                        $this->config->$var = 'fa-square-o';
+                    }
+                    $var = 'customlinkstitle_'.$i;
+                    if (!isset($this->config->$var)) {
+                        $this->config->$var = '';
+                    }
+                    $var = 'customlinkurl_'.$i;
+                    if (!isset($this->config->$var)) {
+                        $this->config->$var = '';
+                    }
+                    $var = 'linkbehaviour_'.$i;
+                    if (!isset($this->config->$var)) {
+                        $this->config->$var = '';
+                    }
+                }
+            }
+            if ($numberoflinks = get_config('block_ned_teacher_tools', 'numberoflinks')) {
+                for ($i = 0; $i <= $numberoflinks; $i++) {
+                    $var = 'sitelink_'.$i;
+                    if (!isset($this->config->$var)) {
+                        $this->config->$var = 1;
+                    }
+                }
+            }
         }
     }
 
@@ -166,10 +202,8 @@ class block_ned_teacher_tools extends block_list {
                 }
             }
 
-
             // Settings.
             $cachedatalast = get_config('block_ned_teacher_tools', 'cachedatalast_'.$this->page->course->id);
-            $refreshmodecourse = get_config('block_ned_teacher_tools', 'refreshmodecourse');
             $refreshmodefrontpage = get_config('block_ned_teacher_tools', 'refreshmodefrontpage');
             $showunmarked = get_config('block_ned_teacher_tools', 'showunmarked');
             $showmarked = get_config('block_ned_teacher_tools', 'showmarked');
@@ -191,25 +225,13 @@ class block_ned_teacher_tools extends block_list {
                 $params[] = 0;
             }
 
-            if ($refreshmodecourse == 'pageload') {
-                $summary =  block_ned_teacher_tools_count_unmarked_activities($this->page->course, 'unmarked', '', $USER->id);
-                $numunmarked = $summary['unmarked'];
-                $nummarked = $summary['marked'];
-                $numunsubmitted = $summary['unsubmitted'];
-                $numsaved = $summary['saved'];
-            }
+            $summary =  block_ned_teacher_tools_count_unmarked_activities($this->page->course, 'unmarked', '', $USER->id);
+            $numunmarked = $summary['unmarked'];
+            $nummarked = $summary['marked'];
+            $numunsubmitted = $summary['unsubmitted'];
+            $numsaved = $summary['saved'];
 
             if ($showunmarked) {
-                if ($refreshmodecourse == 'manual') {
-                    $sql = "SELECT SUM(m.unmarked) unmarked
-                              FROM {block_ned_teacher_tools_cach} m
-                             WHERE m.courseid = ?
-                               AND m.modname {$insql}
-                               AND m.userid = ?
-                               AND m.expired = 0";
-                    $modcache = $DB->get_record_sql($sql, $params);
-                    $numunmarked = $modcache->unmarked;
-                }
                 $this->content->items[] = '<a href="' . $CFG->wwwroot . '/blocks/ned_teacher_tools/fn_gradebook.php?courseid=' .
                     $this->page->course->id . '&show=unmarked' .
                     '&navlevel=top">'. $numunmarked.' ' .get_string('unmarked', 'block_ned_teacher_tools').'</a>';
@@ -218,16 +240,6 @@ class block_ned_teacher_tools extends block_list {
             }
 
             if ($showmarked) {
-                if ($refreshmodecourse == 'manual') {
-                    $sql = "SELECT SUM(m.marked) marked
-                              FROM {block_ned_teacher_tools_cach} m
-                             WHERE m.courseid = ?
-                               AND m.modname {$insql}
-                               AND m.userid = ?
-                               AND m.expired = 0";
-                    $modcache = $DB->get_record_sql($sql, $params);
-                    $nummarked = $modcache->marked;
-                }
                 $this->content->items[] = '<a href="' . $CFG->wwwroot . '/blocks/ned_teacher_tools/fn_gradebook.php?courseid=' .
                     $this->page->course->id . '&show=marked' .
                     '&navlevel=top">' . $nummarked . ' ' .get_string('marked', 'block_ned_teacher_tools').'</a>';
@@ -236,16 +248,6 @@ class block_ned_teacher_tools extends block_list {
             }
 
             if ($showunsubmitted) {
-                if ($refreshmodecourse == 'manual') {
-                    $sql = "SELECT SUM(m.unsubmitted) unsubmitted
-                              FROM {block_ned_teacher_tools_cach} m
-                             WHERE m.courseid = ?
-                               AND m.modname {$insql}
-                               AND m.userid = ?
-                               AND m.expired = 0";
-                    $modcache = $DB->get_record_sql($sql, $params);
-                    $numunsubmitted = $modcache->unsubmitted;
-                }
                 $this->content->items[] = '<a href="' . $CFG->wwwroot . '/blocks/ned_teacher_tools/fn_gradebook.php?courseid=' .
                     $this->page->course->id . '&show=unsubmitted' .
                     '&navlevel=top">' . $numunsubmitted . ' '.get_string('unsubmitted', 'block_ned_teacher_tools').'</a>';
@@ -254,16 +256,6 @@ class block_ned_teacher_tools extends block_list {
             }
 
             if (isset($this->config->showsaved) && $this->config->showsaved) {
-                if ($refreshmodecourse == 'manual') {
-                    $sql = "SELECT SUM(m.saved) saved
-                              FROM {block_ned_teacher_tools_cach} m
-                             WHERE m.courseid = ?
-                               AND m.modname {$insql}
-                               AND m.userid = ?
-                               AND m.expired = 0";
-                    $modcache = $DB->get_record_sql($sql, $params);
-                    $numsaved = $modcache->saved;
-                }
                 $this->content->items[] = '<a href="' . $CFG->wwwroot . '/blocks/ned_teacher_tools/fn_gradebook.php?courseid=' .
                     $this->page->course->id . '&show=saved' .
                     '&navlevel=top">' . $numsaved . ' '.get_string('saved', 'block_ned_teacher_tools').'</a>';
@@ -297,6 +289,66 @@ class block_ned_teacher_tools extends block_list {
                     get_string('studentlist', 'block_ned_teacher_tools') . '</a>';
                 $this->content->icons[] = "<img src=\"" . $OUTPUT->pix_url('i/group') . "\" class=\"icon\" alt=\"\" />";
             }
+
+            // Custom links.
+            $numberofcourselinks = $this->config->numberoflinks;
+            $numberofsitelinks = get_config('block_ned_teacher_tools', 'numberoflinks');
+            $enabledsitelinks = 0;
+
+            if ($numberofsitelinks) {
+                for ($i = 1; $i <= $numberofsitelinks; $i++) {
+                    $var = 'sitelink_' . $i;
+                    $enabledsitelinks += (int)$this->config->$var;
+                }
+            }
+
+            if ($enabledsitelinks + $numberofcourselinks) {
+                $this->content->items[] = html_writer::div(get_config('block_ned_teacher_tools', 'customlinkstitle'), 'block-subtitle');
+            } else {
+                $this->content->items[] = "<div style='width:156px;'><hr /></div>";
+            }
+            $this->content->icons[] = '';
+
+            if ($enabledsitelinks) {
+                for ($i = 1; $i <= $numberofsitelinks; $i++) {
+                    $var = 'sitelink_' . $i;
+                    $icon =  get_config('block_ned_teacher_tools', 'iconcode_' . $i);
+                    $target =  get_config('block_ned_teacher_tools', 'linkbehaviour_' . $i);
+                    $url =  get_config('block_ned_teacher_tools', 'customlinkurl_' . $i);
+                    $title =  get_config('block_ned_teacher_tools', 'customlinkstitle_' . $i);
+
+                    $cls = '';
+                    if ($target == '_popup') {
+                        $cls = 'popup';
+                    }
+                    if ( get_config('block_ned_teacher_tools', 'linkbehaviour_' . $i))
+                    if ((int)$this->config->$var) {
+                        $this->content->items[] = '<a class="'.$cls.'" href="'.$url.'" target="'.$target.'">'.$title.'</a>';
+                        $this->content->icons[] = '<i class="fa '.$icon.'" aria-hidden="true"></i>';
+                    }
+                }
+            }
+
+            if ($numberofcourselinks) {
+                for ($i = 1; $i <= $numberofcourselinks; $i++) {
+                    $icon = 'iconcode_'.$i;
+                    $title = 'customlinkstitle_'.$i;
+                    $target = 'linkbehaviour_'.$i;
+                    $url = 'customlinkurl_'.$i;
+
+                    $cls = '';
+                    if ($this->config->$target == '_popup') {
+                        $cls = 'popup';
+                    }
+
+                    $this->content->items[] = '<a class="'.$cls.'" href="' . $this->config->$url . '" target="' .
+                        $this->config->$target . '">' .
+                        $this->config->$title . '</a>';
+                    $this->content->icons[] = '<i class="fa ' . $this->config->$icon . '" aria-hidden="true"></i>';
+                }
+            }
+
+
 
             $now = time();
             $lastweek = $now - (60 * 60 * 24 * $daysnotsubmited);
@@ -349,37 +401,6 @@ class block_ned_teacher_tools extends block_list {
                         '/blocks/ned_teacher_tools/pix/exclamation.png" class="icon" alt="">';
                 }
             }
-
-
-            if ($refreshmodecourse == 'manual') {
-                if ($cachedatalast === false) {
-                    $humantime = get_string('lastrefreshrequired', 'block_ned_teacher_tools');
-                    $showrefreshbutton = true;
-                    $this->content->items = array();
-                    $this->content->icons = array();
-                } else if ($cachedatalast > 0) {
-                    $humantime = get_string('lastrefreshtime', 'block_ned_teacher_tools', block_ned_teacher_tools_human_timing($cachedatalast));
-                    $showrefreshbutton = true;
-                } else {
-                    $humantime = get_string('lastrefreshupdating', 'block_ned_teacher_tools');
-                    $showrefreshbutton = false;
-                }
-
-                if ($showrefreshbutton) {
-                    $refreshicon = html_writer::img($OUTPUT->pix_url('refresh_button', 'block_ned_teacher_tools'), '', null);
-                    $refreshbutton = $refreshicon . ' ' . html_writer::link(
-                            new moodle_url('/blocks/ned_teacher_tools/update_cache.php', array('id' => $this->page->course->id)),
-                            get_string('refreshnow', 'block_ned_teacher_tools'),
-                            array('class' => 'btn btn-secondary fn_refresh_btn')
-                        );
-                    $refresh = html_writer::div(
-                        $humantime . html_writer::empty_tag('br') . $refreshbutton,
-                        'fn_refresh_wrapper_footer'
-                    );
-
-                    $this->content->footer = $refresh;
-                }
-            }
         }
         return $this->content;
     }
@@ -412,6 +433,7 @@ class block_ned_teacher_tools extends block_list {
 
         // CACHE.
         $refreshmodefrontpage = get_config('block_ned_teacher_tools', 'refreshmodefrontpage');
+        $minsbeforerefreshrequired = get_config('block_ned_teacher_tools', 'minsbeforerefreshrequired');
         $adminfrontpage = get_config('block_ned_teacher_tools', 'adminfrontpage');
         $refresh = '';
 
@@ -446,7 +468,7 @@ class block_ned_teacher_tools extends block_list {
                     if ($cachedatalast === false) {
                         $humantime = get_string('lastrefreshrequired', 'block_ned_teacher_tools');
                         $text = '';
-                    } else if ($cachedatalast > 0) {
+                    } else if (($cachedatalast > 0) && (time() < $cachedatalast + $minsbeforerefreshrequired * 60)) {
                         $humantime = get_string('lastrefreshtime', 'block_ned_teacher_tools', block_ned_teacher_tools_human_timing($cachedatalast));
                     } else {
                         $humantime = get_string('lastrefreshrequired', 'block_ned_teacher_tools');
@@ -493,7 +515,7 @@ class block_ned_teacher_tools extends block_list {
                     if ($cachedatalast === false) {
                         $humantime = get_string('lastrefreshrequired', 'block_ned_teacher_tools');
                         $text = '';
-                    } else if ($cachedatalast > 0) {
+                    } else if (($cachedatalast > 0) && (time() < $cachedatalast + $minsbeforerefreshrequired * 60)) {
                         $humantime = get_string('lastrefreshtime', 'block_ned_teacher_tools', block_ned_teacher_tools_human_timing($cachedatalast));
                     } else {
                         $humantime = get_string('lastrefreshrequired', 'block_ned_teacher_tools');
@@ -511,7 +533,6 @@ class block_ned_teacher_tools extends block_list {
                     );
 
                     $text .= "<div style='width:156px;'><hr /></div>" . $refresh;
-
                 }
 
                 if ($text) {

@@ -25,7 +25,7 @@ defined('MOODLE_INTERNAL') || die();
 // Block Info.
 $settings->add( new admin_setting_configempty('block_ned_teacher_tools/blockinfo',
         get_string('blockinfo', 'block_ned_teacher_tools'),
-        '<a target="_blank" href="http://ned.ca/marking-manager">http://ned.ca/marking-manager</a>'
+        '<a target="_blank" href="http://ned.ca/teacher-tools">http://ned.ca/teacher-tools</a>'
     )
 );
 
@@ -70,15 +70,13 @@ $settings->add(
     )
 );
 $settings->add(
-    new admin_setting_configselect(
-        'block_ned_teacher_tools/refreshmodecourse',
-        get_string('refreshmodecourse', 'block_ned_teacher_tools'),
+    new admin_setting_configtext(
+        'block_ned_teacher_tools/minsbeforerefreshrequired',
+        get_string('minsbeforerefreshrequired', 'block_ned_teacher_tools'),
         '',
-        'pageload',
-        array(
-            'pageload' => get_string('pageload', 'block_ned_teacher_tools'),
-            'manual' => get_string('manual', 'block_ned_teacher_tools')
-        )
+        '60',
+        PARAM_INT,
+        10
     )
 );
 $settings->add(
@@ -293,6 +291,118 @@ $settings->add(
         $showhideoptions
     )
 );
+
+// Custom links.
+$settings->add(
+    new admin_setting_heading(
+        'customlinks',
+        get_string('customlinks', 'block_ned_teacher_tools'),
+        ''
+    )
+);
+$settings->add(
+    new admin_setting_configtext(
+        'block_ned_teacher_tools/customlinkstitle',
+        get_string('customlinkstitle', 'block_ned_teacher_tools'),
+        '',
+        get_string('courseresources', 'block_ned_teacher_tools')
+    )
+);
+$numberoflinksoptions = array();
+for ($i = 0; $i <= 10; $i++) {
+    $numberoflinksoptions[$i] = $i;
+}
+$settings->add(
+    new admin_setting_configselect(
+        'block_ned_teacher_tools/numberoflinks',
+        get_string('numberoflinks', 'block_ned_teacher_tools'),
+        '',
+        0,
+        $numberoflinksoptions
+    )
+);
+$settings->add(
+    new admin_setting_configempty(
+        'block_ned_teacher_tools/iconcoodes',
+        get_string('iconcoodes', 'block_ned_teacher_tools'),
+        '<a target="_blank" href="http://fontawesome.io/icons/">http://fontawesome.io/icons/</a>'
+    )
+);
+
+$numberoflinks = get_config('block_ned_teacher_tools', 'numberoflinks');
+
+$linkbehaviouroptions = array(
+    '_blank' => get_string('newwindow', 'block_ned_teacher_tools'),
+    '_self' => get_string('samewindow', 'block_ned_teacher_tools'),
+    '_popup' => get_string('popup', 'block_ned_teacher_tools')
+);
+
+
+if (!empty($numberoflinks)) {
+    for ($i = 1; $i <= (int)$numberoflinks; $i++) {
+        // Link.
+        $settings->add(
+            new admin_setting_heading(
+                'link'.$i,
+                get_string('link', 'block_ned_teacher_tools').' '.$i,
+                ''
+            )
+        );
+        $settings->add(
+            new admin_setting_configtext(
+                'block_ned_teacher_tools/iconcode_'.$i,
+                get_string('iconcode', 'block_ned_teacher_tools'),
+                '',
+                'fa-square-o'
+            )
+        );
+        $settings->add(
+            new admin_setting_configtext(
+                'block_ned_teacher_tools/customlinkstitle_'.$i,
+                get_string('title', 'block_ned_teacher_tools'),
+                '',
+                ''
+            )
+        );
+        $settings->add(
+            new admin_setting_configtext(
+                'block_ned_teacher_tools/customlinkurl_'.$i,
+                get_string('link', 'block_ned_teacher_tools'),
+                '',
+                '',
+                PARAM_URL
+            )
+        );
+        $settings->add(
+            new admin_setting_configselect(
+                'block_ned_teacher_tools/linkbehaviour_'.$i,
+                get_string('linkbehaviour', 'block_ned_teacher_tools'),
+                '',
+                '_self',
+                $linkbehaviouroptions
+            )
+        );
+        $settings->add(
+            new admin_setting_configselect(
+                'block_ned_teacher_tools/showinstudentmenu_'.$i,
+                get_string('showinstudentmenu', 'block_ned_teacher_tools'),
+                '',
+                0,
+                $yesnooptions
+            )
+        );
+    }
+}
+
+
+
+
+
+
+
+
+
+
 
 // Notices.
 $settings->add(
