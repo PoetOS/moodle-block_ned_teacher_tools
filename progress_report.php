@@ -95,8 +95,8 @@ if (!$showsuspendedusers) {
 // If comes from course page.
 $currentgroup = $SESSION->currentgroup[$course->id];
 
-
-if (($groupstudents = block_ned_teacher_tools_mygroup_members($course->id, $USER->id)) && ($currentgroup === 0)) {
+$groupstudents = block_ned_teacher_tools_mygroup_members($course->id, $USER->id);
+if (is_array($groupstudents) && ($currentgroup === 0)) {
     $students = $groupstudents;
 } else {
     $students = get_enrolled_users($context, 'mod/assign:submit', $currentgroup, 'u.*', 'u.firstname', 0, 0, $onlyactiveenrollments);
