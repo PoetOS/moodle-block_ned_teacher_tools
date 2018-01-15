@@ -232,3 +232,5 @@ $string['showinstudentmenu'] = 'Also show in Student menu';
 $string['minsbeforerefreshrequired'] = 'Minutes before refresh required';
 $string['calcnumofactivities'] = 'Calculation the number of activities that require grading...';
 $string['courses'] = 'Course(s)';
+$string['coursetomonitor'] = 'Course to Monitor';
+$string['listexpiredrefreshrequired'] = 'List has expired. Refresh required.';

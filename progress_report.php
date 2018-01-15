@@ -99,19 +99,25 @@ $groupstudents = block_ned_teacher_tools_mygroup_members($course->id, $USER->id)
 if (is_array($groupstudents) && ($currentgroup === 0)) {
     $students = $groupstudents;
 } else {
-    $students = get_enrolled_users($context, 'mod/assign:submit', $currentgroup, 'u.*', 'u.firstname', 0, 0, $onlyactiveenrollments);
+    $students = get_enrolled_users($context, 'mod/assign:submit', $currentgroup, 'u.*', 'u.suspended ASC,u.firstname ASC', 0, 0, $onlyactiveenrollments);
 }
-
 
 $simplegradebook = array();
 $weekactivitycount = array();
 
 foreach ($students as $key => $value) {
+    if ($onlyactiveenrollments) {
+        $supendedenrollment = false;
+    } else {
+        $supendedenrollment = block_ned_teacher_tools_is_suspended_enrolment($course->id, $value->id);
+    }
     if ($showsuspendedaccounts) {
         $simplegradebook[$key]['name'] = $value->firstname . ' ' . substr($value->lastname, 0, 1) . '.';
+        $simplegradebook[$key]['suspended'] = $value->suspended || $supendedenrollment;
     } else {
         if (!$value->suspended) {
             $simplegradebook[$key]['name'] = $value->firstname . ' ' . substr($value->lastname, 0, 1) . '.';
+            $simplegradebook[$key]['suspended'] = $value->suspended ||$supendedenrollment;
         }
     }
 }
@@ -393,6 +399,7 @@ echo "<thead>";
 echo "<tr>";
 echo '<th class="sorter-false {sorter: false} borderless-cell" scope="col" align="center"></th>';
 echo '<th class="sorter-false {sorter: false} borderless-cell" scope="col" align="center"></th>';
+echo '<th class="sorter-false {sorter: false} borderless-cell" scope="col" style="display: none;"></th>';
 
 foreach ($weekactivitycount as $key => $value) {
     if ($value['numofweek']) {
@@ -410,7 +417,8 @@ echo "</tr>";
 // Second header row(activity icons).
 echo "<tr>";
 echo "<th class='mod-icon'>".get_string('name', 'block_ned_teacher_tools')."</th>";
-echo "<th class='mod-icon'}'>%</td>";
+echo "<th class='mod-icon'}'>%</th>";
+echo "<th class='mod-icon'}' style='display: none;'></th>";
 foreach ($weekactivitycount as $key => $value) {
     if ($value['numofweek']) {
         foreach ($value['mod'] as $imagelink) {
@@ -442,9 +450,12 @@ foreach ($simplegradebook as $studentid => $studentreport) {
     } else {
         $studentclass = "odd";
     }
+    if ($studentreport['suspended']) {
+        $studentclass .= ' suspended';
+    }
     echo '<tr>';
     echo '<td nowrap="nowrap" class="'.$studentclass.' name">'. $toggleicon.
-        '<a target="_blank" href='.$CFG->wwwroot.'/grade/report/user/index.php?userid='.
+        '<a target="_blank" href="'.$CFG->wwwroot.'/grade/report/user/index.php?userid='.
         $studentid.'&id='.$course->id.'">'.$studentreport['name'].'</a></td>';
 
     $gradetot = 0;
@@ -466,6 +477,7 @@ foreach ($simplegradebook as $studentid => $studentreport) {
         echo '<td class="red"> - </td>';
     }
 
+    echo '<td class="" style="display: none;">'.$studentreport['suspended'].'</td>';
 
     foreach ($studentreport['grade'] as $sgrades) {
         $userurl = $studentreport['url'];

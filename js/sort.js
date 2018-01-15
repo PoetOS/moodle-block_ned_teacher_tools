@@ -3,7 +3,7 @@ if (typeof jQuery == "undefined") {
 }
 $(document).ready(function() {
     $("#datatable").tablesorter({
-        sortList: [[0,0]],
+        sortList: [[2,0]],
         headers: {
             '.sorter-false' : {
                 sorter: false

@@ -2884,7 +2884,7 @@ function block_ned_teacher_tools_get_block_config ($courseid, $blockname='ned_te
     }
 }
 
-function block_ned_teacher_tools_build_ungraded_tree ($courses, $supportedmodules, $classforhide='', $showzeroungraded=0, $maxcourse=10) {
+function block_ned_teacher_tools_build_ungraded_tree($courses, $supportedmodules, $classforhide='', $showzeroungraded=0, $maxcourse=10) {
     global $CFG, $DB, $OUTPUT, $USER;
 
     $refreshmodefrontpage = get_config('block_ned_teacher_tools', 'refreshmodefrontpage');
@@ -3364,6 +3364,11 @@ function block_ned_teacher_tools_cache_course_data ($courseid, progress_bar $pro
     $supportedmodules = block_ned_teacher_tools_supported_mods();
 
     $filtercourses = block_ned_teacher_tools_get_setting_courses();
+    $userfilters = block_ned_teacher_tools_get_user_filter();
+
+    if (is_array($userfilters)) {
+        $filtercourses = array_intersect($filtercourses, $userfilters);
+    }
     $cachecourses = array();
 
     if (in_array($courseid, $filtercourses)) {
@@ -3371,6 +3376,9 @@ function block_ned_teacher_tools_cache_course_data ($courseid, progress_bar $pro
     } else if ($courseid == SITEID) {
         if ($teachercourses = block_ned_teacher_tools_teacher_courses($USER->id)) {
             foreach ($teachercourses as $teachercourse) {
+                if (empty($filtercourses) && is_array($userfilters)) {
+                    continue;
+                }
                 if (in_array($teachercourse->courseid, $filtercourses)) {
                     $cachecourses[] = $teachercourse->courseid;
                 }
@@ -4029,4 +4037,49 @@ function block_ned_teacher_tools_suspended_users_view_vars($courseid) {
             break;
     }
     return array($onlyactiveenrollments, $showsuspendedaccounts);
+}
+function block_ned_teacher_tools_is_suspended_enrolment($courseid, $userid) {
+    global $DB;
+    $sql = "SELECT Sum(ue.status) suspended 
+              FROM {user} u
+              JOIN {user_enrolments} ue
+                ON ue.userid = u.id
+              JOIN {enrol}  e
+                ON (e.id = ue.enrolid AND e.courseid = ?)
+             WHERE u.id = ?
+               AND u.deleted = 0";
+    $status = $DB->get_record_sql($sql, array($courseid, $userid));
+    return $status->suspended;
+}
+function block_ned_teacher_tools_get_user_filter($userid = null) {
+    $usercoursefilter = get_user_preferences('block_ned_teacher_tools_coursefilter', $userid);
+    if (is_null($usercoursefilter)) {
+        return block_ned_teacher_tools_get_setting_courses();
+    }
+    if ($usercoursefilter == -1) {
+        return array();
+    }
+    $selectedcourses = explode(',', $usercoursefilter);
+    return $selectedcourses;
+}
+function block_ned_teacher_tools_get_frontpage_courses($userid = null) {
+    global $USER;
+
+    if (!$userid) {
+        $userid = $USER->id;
+    }
+    $adminfrontpage = get_config('block_ned_teacher_tools', 'adminfrontpage');
+    $courses = block_ned_teacher_tools_get_setting_courses();
+
+    if (is_siteadmin() && $adminfrontpage == 'all') {
+        return $courses;
+    } else {
+        $teachercourses = block_ned_teacher_tools_teacher_courses($userid);
+        $tcourses = array();
+        foreach ($teachercourses as $teachercourse) {
+            $tcourses[$teachercourse->courseid] = $teachercourse->courseid;
+        }
+        return array_intersect($courses, $tcourses);
+    }
+
 }
