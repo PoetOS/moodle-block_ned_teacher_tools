@@ -234,3 +234,4 @@ $string['calcnumofactivities'] = 'Calculation the number of activities that requ
 $string['courses'] = 'Course(s)';
 $string['coursetomonitor'] = 'Course to Monitor';
 $string['listexpiredrefreshrequired'] = 'List has expired. Refresh required.';
+$string['truncateactivitynames'] = 'Truncate text in activity names';

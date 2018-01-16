@@ -401,11 +401,16 @@ echo '<th class="sorter-false {sorter: false} borderless-cell" scope="col" align
 echo '<th class="sorter-false {sorter: false} borderless-cell" scope="col" align="center"></th>';
 echo '<th class="sorter-false {sorter: false} borderless-cell" scope="col" style="display: none;"></th>';
 
+$truncateactivitynames = get_config('block_ned_teacher_tools', 'truncateactivitynames');
+
 foreach ($weekactivitycount as $key => $value) {
     if ($value['numofweek']) {
         foreach ($value['mod'] as $index => $imagelink) {
-            $longactivityname = $value['modname'][$index];
-            $displayname= shorten_text($value['modname'][$index], 30);
+            $displayname = $value['modname'][$index];
+            if ($truncateactivitynames) {
+                $displayname = substr($value['modname'][$index], 0, (int)$truncateactivitynames);
+            }
+            $displayname = shorten_text($displayname, 30);
             $formattedactivityname = format_string($displayname, true, array('context' => $context));
             echo '<th class="sorter-false {sorter: false}" scope="col" align="center">'.
                 '<span class="completion-activityname">'.
@@ -503,7 +508,6 @@ foreach ($simplegradebook as $studentid => $studentreport) {
                 default:
                     $userurl->param('show', 'unmarked');
             }
-
 
             echo '<td class="'.$studentclass.' icon">'.'<a href="'.$userurl->out(false).'"><img src="' . $CFG->wwwroot . '/blocks/ned_teacher_tools/pix/'. $sgrade.'" height="16" width="16" alt=""></a></td>';
         }

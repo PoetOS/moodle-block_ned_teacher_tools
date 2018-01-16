@@ -477,7 +477,7 @@ class block_ned_teacher_tools extends block_list {
                     $cachedatalast = block_ned_teacher_tools_frontapage_cache_update_time($USER->id);
                     if ($cachedatalast === false) {
                         $humantime = get_string('lastrefreshrequired', 'block_ned_teacher_tools').
-                            html_writer::empty_tag('br');;
+                            html_writer::empty_tag('br');
                         $text = '';
                     } else if (($cachedatalast > 0) && (time() < $cachedatalast + $minsbeforerefreshrequired * 60)) {
                         $humantime = get_string('lastrefreshtime', 'block_ned_teacher_tools', block_ned_teacher_tools_human_timing($cachedatalast)).

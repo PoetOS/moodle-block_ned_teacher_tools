@@ -219,6 +219,23 @@ $settings->add(
         $showhideoptions
     )
 );
+$truncateactivitynameoptions = array(
+    0 => get_string('default'),
+    1 => '1',
+    2 => '2',
+    3 => '3',
+    4 => '4',
+    5 => '5'
+);
+$settings->add(
+    new admin_setting_configselect(
+        'block_ned_teacher_tools/truncateactivitynames',
+        get_string('truncateactivitynames', 'block_ned_teacher_tools'),
+        '',
+        0,
+        $truncateactivitynameoptions
+    )
+);
 
 // NED Teacher Tools.
 $settings->add(
