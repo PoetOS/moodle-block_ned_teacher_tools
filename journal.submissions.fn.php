@@ -30,17 +30,21 @@ if (! $cm = get_coursemodule_from_instance("journal", $journal->id, $course->id)
     print_error("Course Module ID was incorrect");
 }
 
-$ctx = context_module::instance($cm->id);
+$context = context_module::instance($cm->id);
 
 require_once($CFG->dirroot.'/lib/gradelib.php');
 require_once($CFG->dirroot.'/mod/journal/lib.php');
 
 $o = '';
 
+require_capability('mod/journal:manageentries', $context);
+$readonly = false;
+if (!is_siteadmin() &&  has_capability('block/ned_teacher_tools:viewreadonly', $context, null, false)) {
+    $readonly = true;
+}
+
 if (($show == 'unmarked') || ($show == 'saved') || ($expand)) {
     if ($gradingonly) {
-        $context = context_module::instance($cm->id);
-        require_capability('mod/journal:manageentries', $context);
         // make some easy ways to access the entries.
         if ($eee = $DB->get_records("journal_entries", array("journal" => $journal->id))) {
             foreach ($eee as $ee) {
@@ -174,8 +178,6 @@ if (($show == 'unmarked') || ($show == 'saved') || ($expand)) {
             $last = true;
         }
 
-        $context = context_module::instance($cm->id);
-        require_capability('mod/journal:manageentries', $context);
         // make some easy ways to access the entries.
         if ($eee = $DB->get_records("journal_entries", array("journal" => $journal->id))) {
             foreach ($eee as $ee) {
@@ -288,6 +290,8 @@ if (($show == 'unmarked') || ($show == 'saved') || ($expand)) {
             if ($overriden) {
                 $locked = '<img class="ned-locked-icon" width="16" height="16" alt="Locked" src="'.$OUTPUT->pix_url('t/locked', '').'">';
                 $o .= get_string('gradeoverridedetected', 'block_ned_teacher_tools').' '.$locked;
+            } else if ($readonly) {
+                $o .= '';
             } else {
                 $o .= "<input type=\"submit\" value=\"" . get_string('save', 'block_ned_teacher_tools') . "\" />";
             }

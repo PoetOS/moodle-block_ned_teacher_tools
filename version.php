@@ -23,7 +23,7 @@
  * @developer  Michael Gardener <mgardener@cissq.com>
  */
 
-$plugin->version  = 2018011501;
+$plugin->version  = 2018011600;
 $plugin->requires = 2015111600; // Moodle 3.0 + 
 $plugin->maturity = MATURITY_STABLE;
 $plugin->component = 'block_ned_teacher_tools';
