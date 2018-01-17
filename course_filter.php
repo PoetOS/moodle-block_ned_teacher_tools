@@ -26,9 +26,6 @@ require_once($CFG->dirroot . '/blocks/ned_teacher_tools/course_filter_form.php')
 
 require_login();
 
-// Permission.
-require_capability('block/ned_teacher_tools:addinstance', context_system::instance(), $USER->id);
-
 $title = get_string('coursecategories', 'block_ned_teacher_tools');
 $heading = $SITE->fullname;
 
