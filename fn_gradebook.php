@@ -644,7 +644,7 @@ $participantsselect->formid = 'fn_participants';
 $participantsselect->label = html_writer::img($OUTPUT->pix_url('i/user'), '');
 $participantsform = '<div class="groupselector">'.$OUTPUT->render($participantsselect).'</div>';
 
-echo '<div class="fn-menuwrapper">';
+echo '<div class="ned-teacher_tools-menu-wrapper">';
 echo $activitytypeform . "&nbsp;&nbsp;";
 
 $groupurl = new moodle_url(

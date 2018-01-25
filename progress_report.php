@@ -382,7 +382,7 @@ if ($gradeitem = $DB->get_record('grade_items', array('courseid' => $courseid, '
     }
 }
 
-echo '<div class="fn-menuwrapper">';
+echo '<div class="ned-teacher_tools-menu-wrapper">';
 block_ned_teacher_tools_groups_print_course_menu($course, $CFG->wwwroot.'/blocks/ned_teacher_tools/progress_report.php?id='.
     $course->id.'&unsubmitted='.$unsubmitted.'&showsuspendedusers='.$showsuspendedusers, false, $group);
 echo $viewform;

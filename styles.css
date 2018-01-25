@@ -604,14 +604,14 @@ table.simplegradebook td.empty-week {
 #page-simple_gradebook .groupselector {
     margin-left: 15px;
 }
-.fn-menuwrapper {
+.ned-teacher_tools-menu-wrapper {
     text-align: right;
     margin: 0 auto 10px;
 }
-div.fn-menuwrapper div.groupselector div.singleselect{
+div.ned-teacher_tools-menu-wrapper div.groupselector div.singleselect{
     margin: 1px 0 !important;
 }
-div.fn-menuwrapper div.groupselector div.singleselect .singleselect{
+div.ned-teacher_tools-menu-wrapper div.groupselector div.singleselect .singleselect{
     margin: 0 !important;
 }
 div.tablecontainer {
@@ -917,7 +917,7 @@ th.fn-student, th.fn-posts,th.fn-replies, th.fn-rating {
 #page-blocks-ned_teacher_tools-update_cache .page-title {
     text-align: center;
 }
-#page-blocks-ned_teacher_tools-progress_report .fn-menuwrapper .groupselector {
+#page-blocks-ned_teacher_tools-progress_report .ned-teacher_tools-menu-wrapper .groupselector {
     margin-right: 10px;
 }
 #page-blocks-ned_teacher_tools-fn_gradebook #fitem_id_editpdf .fitemtitle {
