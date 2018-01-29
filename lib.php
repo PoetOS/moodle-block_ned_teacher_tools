@@ -657,7 +657,7 @@ function block_ned_teacher_tools_assign_oldest_ungraded($assign) {
 }
 
 function block_ned_teacher_tools_forum_count_ungraded($forumid, $graded, $students, $show='unmarked') {
-    global $CFG, $DB;
+    global $DB;
 
     $var = array(
         'unmarked' => 0,
@@ -667,13 +667,15 @@ function block_ned_teacher_tools_forum_count_ungraded($forumid, $graded, $studen
     );
 
     // Get students from forum_posts.
-    $fusers = $DB->get_records_sql("SELECT DISTINCT u.id
-                               FROM {forum_discussions} d
-                               INNER JOIN {forum_posts} p ON p.discussion = d.id
-                               INNER JOIN {user} u ON u.id = p.userid
-                               WHERE d.forum = $forumid");
+    $sql = "SELECT DISTINCT u.id
+              FROM {forum_discussions} d
+        INNER JOIN {forum_posts} p
+                ON p.discussion = d.id
+        INNER JOIN {user} u
+                ON u.id = p.userid
+             WHERE d.forum = ?";
 
-    if (is_array($fusers)) {
+    if ($fusers = $DB->get_records_sql($sql, array($forumid))) {
         foreach ($fusers as $key => $user) {
             if (!array_key_exists($key, $students)) {
                 unset($fusers[$key]);
@@ -690,12 +692,13 @@ function block_ned_teacher_tools_forum_count_ungraded($forumid, $graded, $studen
         $var['unmarked'] = (count($fusers) - count($graded));
     }
 
+
     // Marked.
     $var['marked'] = count($graded);
 
     // Unsubmitted
     $numuns = count($students) - count($fusers);
-    $var['marked'] = max(0, $numuns);
+    $var['unsubmitted'] = max(0, $numuns);
 
     return $var;
 }
@@ -873,25 +876,27 @@ function block_ned_teacher_tools_count_unmarked_activities(&$course, $info='unma
                                 $modgrades = false;
                             } else {
                                 $modgrades = new stdClass();
-                                if (!($modgrades->grades = $gradefunction($instance))) {
+                                if (!$modgrades->grades = $gradefunction($instance)) {
                                     $modgrades->grades = array();
                                 }
-                                $sql = "SELECT asub.id,
-                                               asub.userid,
-                                               ag.grade
-                                          FROM {assign_submission} asub
-                                     LEFT JOIN {assign_grades} ag
-                                            ON asub.userid = ag.userid
-                                           AND asub.assignment = ag.assignment
-                                           AND asub.attemptnumber = ag.attemptnumber
-                                         WHERE asub.assignment = ?
-                                           AND asub.status = 'submitted'";
+                                if ($mod->modname == 'assign') {
+                                    $sql = "SELECT asub.id,
+                                                   asub.userid,
+                                                   ag.grade
+                                              FROM {assign_submission} asub
+                                         LEFT JOIN {assign_grades} ag
+                                                ON asub.userid = ag.userid
+                                               AND asub.assignment = ag.assignment
+                                               AND asub.attemptnumber = ag.attemptnumber
+                                             WHERE asub.assignment = ?
+                                               AND asub.status = 'submitted'";
 
-                                if ($gradedsubmissions = $DB->get_records_sql($sql, array($instance->id))) {
-                                    foreach ($gradedsubmissions as $gradedsubmission) {
-                                        if (! $gradedsubmission->grade) {
-                                            if (isset($modgrades->grades[$gradedsubmission->userid])) {
-                                                unset($modgrades->grades[$gradedsubmission->userid]);
+                                    if ($gradedsubmissions = $DB->get_records_sql($sql, array($instance->id))) {
+                                        foreach ($gradedsubmissions as $gradedsubmission) {
+                                            if (!$gradedsubmission->grade) {
+                                                if (isset($modgrades->grades[$gradedsubmission->userid])) {
+                                                    unset($modgrades->grades[$gradedsubmission->userid]);
+                                                }
                                             }
                                         }
                                     }
@@ -901,9 +906,8 @@ function block_ned_teacher_tools_count_unmarked_activities(&$course, $info='unma
                                 // Store the number of ungraded entries for this group.
                                 if (is_array($modgrades->grades) && is_array($students)) {
                                     $gradedarray = array_intersect(array_keys($students), array_keys($modgrades->grades));
-                                    $numgraded = count($gradedarray);
-                                    $numstudents = count($students);
                                     $ungradedfunction = 'block_ned_teacher_tools_' . $mod->modname . '_count_ungraded';
+
                                     if (function_exists($ungradedfunction)) {
                                         $extra = false;
                                         $ung = $ungradedfunction($instance->id, $gradedarray, $students, $info, $extra, $instance);
