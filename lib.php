@@ -168,14 +168,13 @@ function block_ned_teacher_tools_assign_count_ungraded($assign, $graded, $studen
                            AND s.status='submitted'
                            AND g.grade IS NULL";
 
+        $students = explode(',', $studentlist);
         if ($unmarkedstus = $DB->get_records_sql($sqlunmarked)) {
-            $students = explode(',', $studentlist);
-
             foreach ($unmarkedstus as $unmarkedstu) {
                 $students = array_diff($students, array($unmarkedstu->userid));
             }
-            $studentlistmarked = implode(',', $students);
         }
+        $studentlistmarked = implode(',', $students);
     }
     if (empty($studentlistmarked)) {
         $var['marked'] = 0;
