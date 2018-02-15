@@ -144,7 +144,7 @@ $select->formid = 'fngroup2';
 $select->label = get_string('showsuspendedusers', 'block_ned_teacher_tools');
 $filterform .= '<div class="groupselector">' . $OUTPUT->render($select) . '</div>';
 
-$filterform .= "<div class=\"groupselector\"><img src=\"" . $OUTPUT->pix_url('i/grades') . "\" class=\"icon\" alt=\"\" />" .
+$filterform .= "<div class=\"groupselector\"><img src=\"" . $OUTPUT->image_url('i/grades') . "\" class=\"icon\" alt=\"\" />" .
     '<a href="' . $CFG->wwwroot . '/grade/report/index.php?id=' . $course->id .
     '&navlevel=top">' . get_string('moodlegradebook', 'block_ned_teacher_tools') . '</a></div>';
 $filterform .= '</div>';
@@ -244,7 +244,7 @@ if ($students) {
 
                                 $image = "<A target='_blank' HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\"
                                 TITLE=\"$instance->name\"><IMG BORDER=0 VALIGN=absmiddle
-                                SRC=\"" . $OUTPUT->pix_url('icon', $mod->modname) . "\"
+                                SRC=\"" . $OUTPUT->image_url('icon', $mod->modname) . "\"
                                 HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\"></A>";
 
 
@@ -378,7 +378,7 @@ if ($students) {
     if ($gradeitem = $DB->get_record('grade_items', array('courseid' => $courseid, 'itemtype' => 'course'))) {
         if ($gradeitem->gradetype == GRADE_TYPE_NONE) {
             $nocorseaveragemsg = '<div class="course-average-warning"><img class="actionicon" width="16" height="16" alt="" src="' .
-                $OUTPUT->pix_url('i/risk_xss', '') . '"> ' . get_string('nocoursetotal', 'block_fn_mentor') . '<div>';
+                $OUTPUT->image_url('i/risk_xss', '') . '"> ' . get_string('nocoursetotal', 'block_fn_mentor') . '<div>';
         }
     }
 
@@ -430,7 +430,7 @@ if ($students) {
     echo "<tbody>";
     $counter = 0;
 
-    $toggleicon = html_writer::img($OUTPUT->pix_url('hightlightoff', 'block_ned_teacher_tools'), '', array('class' => 'row-toggle icon'));
+    $toggleicon = html_writer::img($OUTPUT->image_url('hightlightoff', 'block_ned_teacher_tools'), '', array('class' => 'row-toggle icon'));
     $toggleicon = html_writer::div('', 'row-toggle');
 
     $sql = "SELECT gg.finalgrade,

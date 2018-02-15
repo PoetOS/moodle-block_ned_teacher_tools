@@ -51,14 +51,13 @@ class block_ned_teacher_tools extends block_list {
         $module = array('name' => 'block_ned_teacher_tools', 'fullpath' => '/blocks/ned_teacher_tools/module1.js');
         $this->page->requires->js_init_call('M.block_ned_teacher_tools.init_popup', null, false, $module);
 
-        $blocktitlesitelevel = get_config('block_ned_teacher_tools', 'blocktitlesitelevel');
-        $blocktitlecourselevel = get_config('block_ned_teacher_tools', 'blocktitlecourselevel');
-
         if (($this->page->course->id == SITEID) || ($this->instance->pagetypepattern == 'my-index') ) {
-            $this->title = $blocktitlesitelevel;
-            $this->page->requires->js_call_amd('block_ned_teacher_tools/filter_icon', 'render');
+            global $OUTPUT;
+            $this->title = get_config('block_ned_teacher_tools', 'blocktitlesitelevel');
+            $url = new moodle_url('/blocks/ned_teacher_tools/course_filter.php');
+            $this->title .= '<div class="filter-icon"><a href="'.$url->out(true).'">'.$OUTPUT->pix_icon('i/filter', '').'</a></div>';
         } else {
-            $this->title = $blocktitlecourselevel;
+            $this->title = get_config('block_ned_teacher_tools', 'blocktitlecourselevel');
         }
         // Default setting values.
         if($this->page->course->id != SITEID) {
@@ -190,7 +189,7 @@ class block_ned_teacher_tools extends block_list {
                 $this->content->items[] = '<a href="' . $CFG->wwwroot . '/course/view.php?id=' .
                     $this->page->course->id .
                     '">' . $this->page->course->shortname . '</a>';
-                $this->content->icons[] = "<img src=\"" . $OUTPUT->pix_url('i/course') . "\" class=\"icon\" alt=\"\" />";
+                $this->content->icons[] = "<img src=\"" . $OUTPUT->image_url('i/course') . "\" class=\"icon\" alt=\"\" />";
             }
 
             if ($showtitles) {
@@ -274,21 +273,21 @@ class block_ned_teacher_tools extends block_list {
                 $this->content->items[] = '<a href="' . $CFG->wwwroot . '/blocks/ned_teacher_tools/progress_report.php?id=' .
                     $this->page->course->id .
                     '">' . get_string('simplegradebook', 'block_ned_teacher_tools') . '</a>';
-                $this->content->icons[] = "<img src=\"" . $OUTPUT->pix_url('i/grades') . "\" class=\"icon\" alt=\"\" />";
+                $this->content->icons[] = "<img src=\"" . $OUTPUT->image_url('i/grades') . "\" class=\"icon\" alt=\"\" />";
             }
 
             if ($showgradebook) {
                 $this->content->items[] = '<a href="' . $CFG->wwwroot . '/grade/report/grader/index.php?id=' .
                     $this->page->course->id .
                     '">' . get_string('gradebook', 'block_ned_teacher_tools') . '</a>';
-                $this->content->icons[] = "<img src=\"" . $OUTPUT->pix_url('i/report') . "\" class=\"icon\" alt=\"\" />";
+                $this->content->icons[] = "<img src=\"" . $OUTPUT->image_url('i/report') . "\" class=\"icon\" alt=\"\" />";
             }
 
             if ($showreportslink) {
                 $this->content->items[] = '<a href="' . $CFG->wwwroot . '/user/index.php?contextid='.$context->id.
                     '&sifirst=&silast=&roleid=5">' .
                     get_string('studentlist', 'block_ned_teacher_tools') . '</a>';
-                $this->content->icons[] = "<img src=\"" . $OUTPUT->pix_url('i/group') . "\" class=\"icon\" alt=\"\" />";
+                $this->content->icons[] = "<img src=\"" . $OUTPUT->image_url('i/group') . "\" class=\"icon\" alt=\"\" />";
             }
 
             // Custom links.
@@ -487,7 +486,7 @@ class block_ned_teacher_tools extends block_list {
                         $humantime = '';
                     }
 
-                    $refreshicon = html_writer::img($OUTPUT->pix_url('refresh_button', 'block_ned_teacher_tools'), '', null);
+                    $refreshicon = html_writer::img($OUTPUT->image_url('refresh_button', 'block_ned_teacher_tools'), '', null);
                     $refreshbutton = $refreshicon . ' ' . html_writer::link(
                             new moodle_url('/blocks/ned_teacher_tools/update_cache.php', array('id' => $this->page->course->id)),
                             get_string('refreshnow', 'block_ned_teacher_tools'),
@@ -540,7 +539,7 @@ class block_ned_teacher_tools extends block_list {
                         $humantime = '';
                     }
 
-                    $refreshicon = html_writer::img($OUTPUT->pix_url('refresh_button', 'block_ned_teacher_tools'), '', null);
+                    $refreshicon = html_writer::img($OUTPUT->image_url('refresh_button', 'block_ned_teacher_tools'), '', null);
                     $refreshbutton = $refreshicon . ' ' . html_writer::link(
                             new moodle_url('/blocks/ned_teacher_tools/update_cache.php', array('id' => $this->page->course->id)),
                             get_string('refreshnow', 'block_ned_teacher_tools'),

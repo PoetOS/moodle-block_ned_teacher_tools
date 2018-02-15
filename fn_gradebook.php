@@ -220,7 +220,7 @@ $urlview = new moodle_url(
 );
 
 $select = new single_select($urlview, 'view', $viewopts, $selected = $view, '');
-$select->label =  html_writer::img($OUTPUT->pix_url('i/hide'), '');
+$select->label =  html_writer::img($OUTPUT->image_url('i/hide'), '');
 $select->formid = 'fnview';
 $viewform = '<div class="groupselector">'.$OUTPUT->render($select).'</div>';
 
@@ -519,7 +519,7 @@ foreach ($selectedsection as $sectionnum) {
 
                             $image = "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\"" .
                                 "   title=\"$mod->name\">" .
-                                '<img class="actionicon" width="16" height="16" alt="'.$mod->name.'" src="'.$OUTPUT->pix_url('icon', $mod->modname).'">'.
+                                '<img class="actionicon" width="16" height="16" alt="'.$mod->name.'" src="'.$OUTPUT->image_url('icon', $mod->modname).'">'.
                                 "</a>";
 
 
@@ -611,7 +611,7 @@ $activitytypeurl = new moodle_url(
 );
 $activitytypeselect = new single_select($activitytypeurl, 'activity_type', $activitytypeopts, $activitytype, '');
 $activitytypeselect->formid = 'fn_activity_type';
-$activitytypeselect->label =  html_writer::img($OUTPUT->pix_url('i/preview'), '');
+$activitytypeselect->label =  html_writer::img($OUTPUT->image_url('i/preview'), '');
 $activitytypeform = '<div class="groupselector">'.$OUTPUT->render($activitytypeselect).'</div>';
 
 // PARTICIPANTS.
@@ -641,7 +641,7 @@ $participantsurl = new moodle_url(
 );
 $participantsselect = new single_select($participantsurl, 'participants', $participantsopts, $participants, '');
 $participantsselect->formid = 'fn_participants';
-$participantsselect->label = html_writer::img($OUTPUT->pix_url('i/user'), '');
+$participantsselect->label = html_writer::img($OUTPUT->image_url('i/user'), '');
 $participantsform = '<div class="groupselector">'.$OUTPUT->render($participantsselect).'</div>';
 
 echo '<div class="ned-teacher_tools-menu-wrapper">';
@@ -667,7 +667,7 @@ echo $participantsform . "&nbsp;&nbsp;";
 echo $viewform . " ";
 
 echo html_writer::link('#',
-    html_writer::img($OUTPUT->pix_url('fullscreen', 'block_ned_teacher_tools'), ''),
+    html_writer::img($OUTPUT->image_url('fullscreen', 'block_ned_teacher_tools'), ''),
     array('class' => 'ned-hide-blocks')
 );
 
@@ -702,7 +702,7 @@ $nocorseaveragemsg = '';
 if ($gradeitem = $DB->get_record('grade_items', array('courseid' => $courseid, 'itemtype' => 'course'))) {
     if ($gradeitem->gradetype == GRADE_TYPE_NONE) {
         $nocorseaveragemsg = '<div class="course-average-warning"><img class="actionicon" width="16" height="16" alt="" src="'.
-            $OUTPUT->pix_url('i/risk_xss', '').'"> '.get_string('nocoursetotal', 'block_fn_mentor').'<div>';
+            $OUTPUT->image_url('i/risk_xss', '').'"> '.get_string('nocoursetotal', 'block_fn_mentor').'<div>';
     }
 }
 

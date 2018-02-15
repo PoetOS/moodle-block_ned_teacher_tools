@@ -1632,7 +1632,7 @@ function block_ned_teacher_tools_view_submissions($mform, $offset=0, $showattemp
         if (count($unsubmitted) > 0) {
             $url = new moodle_url('/mod/'.$cm->modname.'/view.php', array('id' => $cm->id));
             $image = '<a href="'.$url->out().'"><img width="16" height="16" alt="'.
-                $cm->modname.'" src="'.$OUTPUT->pix_url('icon', $cm->modname).'"></a>';
+                $cm->modname.'" src="'.$OUTPUT->image_url('icon', $cm->modname).'"></a>';
 
             $o .= '<div class="unsubmitted_header">' . $image .
                 " Assignment: <A HREF=\"$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id\"  TITLE=\"$cm->modname\">" .
@@ -2935,7 +2935,7 @@ function block_ned_teacher_tools_build_ungraded_tree($courses, $supportedmodules
                 $totalungraded += $numunmarked;
                 $gradelink = $CFG->wwwroot . '/blocks/ned_teacher_tools/fn_gradebook.php?courseid=' .
                     $course->id . '&show=unmarked' . '&navlevel=top&mid=0&activity_type=' . $supportedmodule;
-                $moduleicon = '<img src="' . $OUTPUT->pix_url('icon', $supportedmodule) . '" class="icon" alt="">';
+                $moduleicon = '<img src="' . $OUTPUT->image_url('icon', $supportedmodule) . '" class="icon" alt="">';
 
                 if ($numunmarked) {
                     $moduletext .= '<dd id="cmid' . $supportedmodule . '" class="module ' . $classforhide . '">' . "\n";
@@ -3256,7 +3256,7 @@ function block_ned_teacher_tools_footer() {
         html_writer::div(
             html_writer::link(
                 'http://ned.ca',
-                html_writer::img($OUTPUT->pix_url('ned_26', 'block_ned_teacher_tools'), 'NED'),
+                html_writer::img($OUTPUT->image_url('ned_26', 'block_ned_teacher_tools'), 'NED'),
                 array('target' => '_blank')
             ),
             'markingmanagercontainer-footer-right'
@@ -3642,10 +3642,10 @@ function block_ned_teacher_tools_groups_print_course_menu($course, $urlroot, $re
 
     if (count($groupsmenu) == 1) {
         $groupname = reset($groupsmenu);
-        $output = html_writer::img($OUTPUT->pix_url('i/users'), '').' '.$groupname;
+        $output = html_writer::img($OUTPUT->image_url('i/users'), '').' '.$groupname;
     } else {
         $select = new single_select(new moodle_url($urlroot), 'group', $groupsmenu, $activegroup, null, 'selectgroup');
-        $select->label = html_writer::img($OUTPUT->pix_url('i/users'), '');
+        $select->label = html_writer::img($OUTPUT->image_url('i/users'), '');
         $output = $OUTPUT->render($select);
     }
 
@@ -3717,7 +3717,7 @@ function block_ned_teacher_tools_view_journal_submissions($journal, $students, $
         if (count($attempts) > 0) {
             $url = new moodle_url('/mod/'.$cm->modname.'/view.php', array('id' => $cm->id));
             $image = '<a href="'.$url->out().'"><img width="16" height="16" alt="'.
-                $cm->modname.'" src="'.$OUTPUT->pix_url('icon', $cm->modname).'"></a>';
+                $cm->modname.'" src="'.$OUTPUT->image_url('icon', $cm->modname).'"></a>';
 
             $o .= '<div class="unsubmitted_header">' . $image .
                 " Journal: <A HREF=\"$CFG->wwwroot/mod/$cm->modname/view.php?id=$cm->id\"  TITLE=\"$cm->modname\">" .
@@ -3785,17 +3785,17 @@ function block_ned_teacher_tools_view_journal_submissions($journal, $students, $
             $t->data[] = new html_table_row(array($cell));
 
             $submittedicon = '<img width="16" height="16" border="0" alt="Journal" src="'.
-                $OUTPUT->pix_url('text', 'block_ned_teacher_tools').'" valign="absmiddle"> ';
+                $OUTPUT->image_url('text', 'block_ned_teacher_tools').'" valign="absmiddle"> ';
             $markedicon = '<img width="16" height="16" border="0" alt="Journal" src="'.
-                $OUTPUT->pix_url('completed', 'block_ned_teacher_tools').'" valign="absmiddle"> ';
+                $OUTPUT->image_url('completed', 'block_ned_teacher_tools').'" valign="absmiddle"> ';
             $savedicon = '<img width="16" height="16" border="0" alt="Journal" src="'.
-                $OUTPUT->pix_url('saved', 'block_ned_teacher_tools').'" valign="absmiddle"> ';
+                $OUTPUT->image_url('saved', 'block_ned_teacher_tools').'" valign="absmiddle"> ';
             if ($gradeitem->gradepass > 0) {
                 $markediconincomplete = '<img width="16" height="16" border="0" alt="Journal" src="'.
-                    $OUTPUT->pix_url('incomplete', 'block_ned_teacher_tools').'" valign="absmiddle"> ';
+                    $OUTPUT->image_url('incomplete', 'block_ned_teacher_tools').'" valign="absmiddle"> ';
             } else {
                 $markediconincomplete = '<img width="16" height="16" border="0" alt="Journal" src="'.
-                    $OUTPUT->pix_url('graded', 'block_ned_teacher_tools').'" valign="absmiddle"> ';
+                    $OUTPUT->image_url('graded', 'block_ned_teacher_tools').'" valign="absmiddle"> ';
             }
 
             $lastsubmissionclass = '';
@@ -3843,7 +3843,7 @@ function block_ned_teacher_tools_view_journal_submissions($journal, $students, $
 
             if ($journal->grade == 0) {
                 $cell1 = new html_table_cell('<img width="16" height="16" border="0" alt="Journal" src="'.
-                    $OUTPUT->pix_url('graded', 'block_ned_teacher_tools').'" valign="absmiddle"> Marked');
+                    $OUTPUT->image_url('graded', 'block_ned_teacher_tools').'" valign="absmiddle"> Marked');
             } else {
                 $cell1 = new html_table_cell(((($gradeitem->gradepass > 0)
                         && ($item->rating >= $gradeitem->gradepass)) ? $markedicon : $markediconincomplete) . 'Marked');
