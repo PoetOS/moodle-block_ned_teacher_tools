@@ -1055,7 +1055,7 @@ th.fn-student, th.fn-posts,th.fn-replies, th.fn-rating {
     color: inherit;
 }
 .block_ned_teacher_tools .filter-icon a .fa {
-    vertical-align: top;
+    vertical-align: top !important;
 }
 .block_ned_teacher_tools .list-expired-msg {
     text-align: center;
