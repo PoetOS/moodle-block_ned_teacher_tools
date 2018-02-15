@@ -1050,6 +1050,13 @@ th.fn-student, th.fn-posts,th.fn-replies, th.fn-rating {
 .block_ned_teacher_tools .filter-icon {
     float: right;
 }
+.block_ned_teacher_tools .filter-icon a, 
+.block_ned_teacher_tools .filter-icon a .fa {
+    color: inherit;
+}
+.block_ned_teacher_tools .filter-icon a .fa {
+    vertical-align: top;
+}
 .block_ned_teacher_tools .list-expired-msg {
     text-align: center;
     color: red;
