@@ -1047,6 +1047,13 @@ th.fn-student, th.fn-posts,th.fn-replies, th.fn-rating {
     font-size: 1.2em;
     margin-bottom: 20px;
 }
+
+.block_ned_teacher_tools {
+    display: inline;
+}
+.block.block_ned_teacher_tools .card-block .block-header h3 { /* NED Boost theme */
+    white-space: normal;
+}
 .block_ned_teacher_tools .filter-icon {
     float: right;
 }

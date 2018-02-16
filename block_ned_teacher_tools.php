@@ -39,7 +39,7 @@ class block_ned_teacher_tools extends block_list {
     }
 
     /**
-     * Constrols the block title based on instance configuration
+     * Controls the block title based on instance configuration
      *
      * @return bool
      */
@@ -53,9 +53,9 @@ class block_ned_teacher_tools extends block_list {
 
         if (($this->page->course->id == SITEID) || ($this->instance->pagetypepattern == 'my-index') ) {
             global $OUTPUT;
-            $this->title = get_config('block_ned_teacher_tools', 'blocktitlesitelevel');
+            $this->title = '<span class="title">'.get_config('block_ned_teacher_tools', 'blocktitlesitelevel').'</span>';
             $url = new moodle_url('/blocks/ned_teacher_tools/course_filter.php');
-            $this->title .= '<div class="filter-icon"><a href="'.$url->out(true).'">'.$OUTPUT->pix_icon('i/filter', '').'</a></div>';
+            $this->title .= '<span class="filter-icon"><a href="'.$url->out(true).'">'.$OUTPUT->pix_icon('i/filter', '').'</a></span>';
         } else {
             $this->title = get_config('block_ned_teacher_tools', 'blocktitlecourselevel');
         }
@@ -100,7 +100,7 @@ class block_ned_teacher_tools extends block_list {
     }
 
     /**
-     * Constrols the block title based on instance configuration
+     * Controls the block title based on instance configuration
      *
      * @return bool
      */
